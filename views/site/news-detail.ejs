@@ -1,0 +1,34 @@
+<%- include('../partials/head') %>
+<%- include('../partials/hero', { heading: 'News' }) %>
+<section class="bg-neutral-200 py-10 md:py-14">
+  <article class="max-w-[1000px] mx-auto px-5">
+    <time class="text-sm text-neutral-600" datetime="<%= item.date %>"><%= fmtDate(item.date) %></time>
+    <h2 class="mt-1 text-3xl md:text-4xl font-semibold tracking-tight underline underline-offset-4 leading-tight max-w-xl"><%= item.title.replace(/^Progress\s+/i, '') %></h2>
+    <% const parts = String(item.content || '').split(/\n{2,}/).map(s => s.trim()).filter(Boolean); %>
+    <div class="mt-6 text-base md:text-xl leading-snug text-justify prose-lite flow-root">
+      <% if (item.image) { %><div class="md:float-right md:ml-6 md:mb-3 md:w-[48%] mb-5"><img src="<%= item.image %>" alt="<%= item.title %>" class="w-full aspect-[4/3] object-cover"></div><% } %>
+      <%- parts.map(p => '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>').join('') %>
+    </div>
+    <% const gal = [item.g1, item.g2, item.g3].filter(Boolean); if (gal.length) { %>
+    <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-5"><% gal.forEach((g,i) => { %><img src="<%= g %>" alt="Dokumentasi <%= i+1 %>" loading="lazy" class="w-full aspect-[4/3] sm:aspect-square object-cover"><% }) %></div>
+    <% } %>
+    <a href="/news" class="mt-10 inline-flex items-center gap-2 text-sm underline"><i class="bi bi-arrow-left"></i> Semua berita</a>
+  </article>
+</section>
+<% if (others.length) { %>
+<section class="py-12 md:py-16">
+  <div class="max-w-[1000px] mx-auto px-5">
+    <div class="flex items-center justify-between gap-4 mb-8">
+      <h2 class="text-2xl md:text-4xl font-semibold tracking-[-0.03em] uppercase">Berita Lainnya</h2>
+      <div class="flex gap-3 shrink-0">
+        <button data-prev class="w-10 h-10 rounded-full bg-black hover:bg-neutral-700 text-white grid place-items-center" aria-label="Sebelumnya"><i class="bi bi-chevron-left"></i></button>
+        <button data-next class="w-10 h-10 rounded-full bg-black hover:bg-neutral-700 text-white grid place-items-center" aria-label="Berikutnya"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+    <div data-slider class="flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2">
+      <% others.forEach(n => { %><%- include('../partials/news-card', { n, cls: 'snap-start shrink-0 basis-[85%] sm:basis-[calc(50%-10px)] lg:basis-[calc((100%-40px)/3)]' }) %><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+<%- include('../partials/foot') %>

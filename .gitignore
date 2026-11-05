@@ -1,0 +1,6 @@
+node_modules/
+data/db.json
+data/.secret
+public/uploads/*
+!public/uploads/.gitkeep
+.env

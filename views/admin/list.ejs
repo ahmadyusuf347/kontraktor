@@ -1,0 +1,47 @@
+<%- include('partials/top') %>
+<%
+  const hasPub = def.fields.some(f => f.name === 'published');
+  const cell = (name, it) => {
+    const f = def.fields.find(x => x.name === name) || { type: 'text' }, v = it[name];
+    if (f.type === 'image') return media(v, it.title || it.name || '', 'w-12 h-12 rounded-md object-cover', 'bi-image');
+    if (f.type === 'checkbox') return `<span class="inline-block text-xs rounded-full px-2.5 py-0.5 border ${v === false ? 'border-neutral-300 text-neutral-500' : 'border-black bg-black text-white'}">${v === false ? 'Draft' : 'Tayang'}</span>`;
+    if (f.type === 'date') return esc(fmtDate(v));
+    if (name === 'icon') return `<i class="bi ${esc(v)} text-xl"></i> <span class="text-xs text-neutral-500">${esc(v)}</span>`;
+    return `<span class="line-clamp-2">${esc(v ?? '')}</span>`;
+  };
+  const labelOf = n => (def.fields.find(f => f.name === n) || {}).label || n;
+%>
+<div class="flex flex-wrap items-center gap-3 mb-5">
+  <div class="relative flex-1 min-w-[200px] max-w-sm"><i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i><input id="tableSearch" type="search" class="fld !pl-9" placeholder="Cari <%= def.label.toLowerCase() %>…"></div>
+  <a href="/admin/r/<%= key %>/new" class="btn ml-auto"><i class="bi bi-plus-lg"></i> Tambah <%= def.singular %></a>
+</div>
+<div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+  <% if (!items.length) { %><div class="p-12 text-center text-neutral-500"><i class="bi bi-folder2-open text-4xl block mb-2"></i>Belum ada data. <a class="underline" href="/admin/r/<%= key %>/new">Tambah sekarang</a>.</div><% } else { %>
+  <table class="w-full text-sm hidden md:table">
+    <thead class="bg-neutral-50 text-left text-xs uppercase tracking-wider text-neutral-500"><tr>
+      <% def.cols.forEach(c => { %><th class="px-5 py-3 font-medium"><%= c === 'image' || c === 'photo' ? '' : labelOf(c) %></th><% }) %><th class="px-5 py-3 text-right font-medium">Aksi</th></tr></thead>
+    <tbody class="divide-y divide-neutral-200">
+      <% items.forEach(it => { %><tr data-row class="hover:bg-neutral-50">
+        <% def.cols.forEach(c => { %><td class="px-5 py-3 align-middle <%= c === 'text' || c === 'description' ? 'max-w-xs' : '' %>"><%- cell(c, it) %></td><% }) %>
+        <td class="px-5 py-3 whitespace-nowrap text-right"><div class="inline-flex gap-2">
+          <% if (hasPub) { %><form method="post" action="/admin/r/<%= key %>/<%= it.id %>/toggle"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn-ghost !px-3 !py-2" title="Tayang/Draft"><i class="bi <%= it.published === false ? 'bi-eye-slash' : 'bi-eye' %>"></i></button></form><% } %>
+          <a href="/admin/r/<%= key %>/<%= it.id %>/edit" class="btn-ghost !px-3 !py-2"><i class="bi bi-pencil"></i> Edit</a>
+          <form method="post" action="/admin/r/<%= key %>/<%= it.id %>/delete" data-confirm="Hapus data ini? Tindakan tidak bisa dibatalkan."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn-danger" aria-label="Hapus"><i class="bi bi-trash"></i></button></form>
+        </div></td></tr><% }) %>
+    </tbody>
+  </table>
+  <ul class="md:hidden divide-y divide-neutral-200">
+    <% items.forEach(it => { %><li data-row class="p-4">
+      <div class="flex gap-3">
+        <% const img = def.cols.find(c => ['image','photo'].includes(c)); if (img) { %><div class="shrink-0"><%- cell(img, it) %></div><% } %>
+        <div class="min-w-0 flex-1 space-y-1 text-sm"><% def.cols.filter(c => c !== img).forEach((c, i) => { %><div class="<%= i === 0 ? 'font-semibold' : 'text-neutral-600 text-xs' %>"><%- cell(c, it) %></div><% }) %></div>
+      </div>
+      <div class="mt-3 flex gap-2">
+        <a href="/admin/r/<%= key %>/<%= it.id %>/edit" class="btn-ghost flex-1 !py-2"><i class="bi bi-pencil"></i> Edit</a>
+        <% if (hasPub) { %><form method="post" action="/admin/r/<%= key %>/<%= it.id %>/toggle"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn-ghost !py-2" aria-label="Tayang/Draft"><i class="bi <%= it.published === false ? 'bi-eye-slash' : 'bi-eye' %>"></i></button></form><% } %>
+        <form method="post" action="/admin/r/<%= key %>/<%= it.id %>/delete" data-confirm="Hapus data ini? Tindakan tidak bisa dibatalkan."><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn-danger" aria-label="Hapus"><i class="bi bi-trash"></i></button></form>
+      </div></li><% }) %>
+  </ul>
+  <% } %>
+</div>
+<%- include('partials/bottom') %>

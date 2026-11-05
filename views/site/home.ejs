@@ -1,0 +1,84 @@
+<%- include('../partials/head') %>
+<main id="main">
+<section class="relative isolate bg-black text-white overflow-hidden" data-hero data-slides="<%= JSON.stringify(slides.map(s => ({ t: s.title, s: s.text }))) %>">
+  <% if (hasVideo) { %>
+  <video data-hero-video class="absolute inset-0 -z-20 w-full h-full object-cover" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1"><source src="/videos/heroes-home.mp4" type="video/mp4"></video>
+  <% } %>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/85 via-black/55 to-black/25" aria-hidden="true"></div>
+  <div class="absolute inset-x-0 bottom-0 h-40 -z-10 bg-gradient-to-t from-black/60 to-transparent" aria-hidden="true"></div>
+  <div class="max-w-[1200px] mx-auto px-5 grid md:grid-cols-12 items-end gap-6 pt-10 md:pt-16 min-h-[560px] md:min-h-[680px]">
+    <div class="<%= S.heroImage ? 'md:col-span-7 lg:col-span-8' : 'md:col-span-10 lg:col-span-9' %> pb-10 md:pb-16 self-center">
+      <h1 class="hero-title font-extrabold leading-[1.02] tracking-[-0.045em] text-[2.6rem] sm:text-6xl lg:text-[4.4rem] [text-shadow:0_2px_24px_rgba(0,0,0,.35)]"><%= slides[0] ? slides[0].title : S.siteName %></h1>
+      <p class="hero-sub mt-6 md:mt-8 max-w-xl text-base md:text-xl leading-snug text-neutral-200"><%= slides[0] ? slides[0].text : '' %></p>
+      <div class="bar flex gap-2.5 mt-10 md:mt-16" role="tablist" aria-label="Slide hero">
+        <% slides.forEach((s,i) => { %><button class="h-1 w-16 md:w-[72px] bg-white/30 overflow-hidden rounded-sm" aria-label="Slide <%= i+1 %>"><span></span></button><% }) %>
+      </div>
+    </div>
+    <% if (S.heroImage) { %>
+    <div class="hero-img md:col-span-5 lg:col-span-4 flex justify-center md:justify-end self-end">
+      <img src="<%= S.heroImage %>" alt="<%= S.siteName %>" class="w-56 sm:w-64 md:w-full max-w-[320px] object-contain object-bottom">
+    </div>
+    <% } %>
+  </div>
+</section>
+
+<% if (stats.length) { %>
+<section class="bg-neutral-100 border-b border-neutral-200">
+  <div class="max-w-[1200px] mx-auto px-5 py-10 md:py-14 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    <% stats.forEach(s => { %>
+      <div data-reveal><p class="text-4xl md:text-6xl font-extrabold tracking-tight"><span data-count="<%= s.value %>">0</span><%= s.suffix %></p><p class="mt-1 text-sm md:text-base text-neutral-600"><%= s.label %></p></div>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<section class="py-16 md:py-28">
+  <div class="max-w-[1200px] mx-auto px-5">
+    <h2 class="text-4xl md:text-6xl font-semibold tracking-[-0.045em] mb-10 md:mb-20">We Provide Services</h2>
+    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-9">
+      <% services.forEach((s,i) => { const hl = i === 1; %>
+        <article data-reveal class="rounded-3xl border p-6 md:p-7 flex flex-col min-h-[300px] <%= hl ? 'bg-black text-white border-black' : 'bg-white border-neutral-300' %>">
+          <i class="bi <%= s.icon || 'bi-tools' %> text-4xl"></i>
+          <h3 class="mt-5 text-2xl font-semibold tracking-tight"><%= s.title %></h3>
+          <p class="mt-2 text-sm leading-snug line-clamp-5 <%= hl ? 'text-neutral-300' : 'text-neutral-700' %>"><%= s.description %></p>
+          <div class="mt-auto pt-6"><%- pill("Let's Talk", '/contact', hl ? 'light' : 'dark', 'w-36 text-xs') %></div>
+        </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<% if (projects.length) { %>
+<section class="pb-16 md:pb-28">
+  <div class="max-w-[1200px] mx-auto px-5">
+    <div class="flex items-end justify-between gap-4 mb-8 md:mb-12">
+      <h2 class="text-3xl sm:text-4xl md:text-6xl font-semibold tracking-[-0.045em]">Selected Projects</h2>
+      <a href="/projects" class="text-sm underline shrink-0">Lihat semua <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-9"><% projects.forEach(p => { %><div data-reveal><%- include('../partials/project-card', { p }) %></div><% }) %></div>
+  </div>
+</section>
+<% } %>
+
+<section class="bg-neutral-200 py-14 md:py-16">
+  <div class="max-w-[1200px] mx-auto px-5">
+    <div class="flex items-center justify-between gap-4 mb-8 md:mb-12">
+      <h2 class="text-3xl sm:text-4xl md:text-6xl font-semibold tracking-[-0.045em]">Lates News and Stories</h2>
+      <div class="flex gap-3 shrink-0">
+        <button data-prev class="w-10 h-10 md:w-[50px] md:h-[50px] rounded-full bg-black hover:bg-neutral-700 text-white grid place-items-center" aria-label="Sebelumnya"><i class="bi bi-chevron-left"></i></button>
+        <button data-next class="w-10 h-10 md:w-[50px] md:h-[50px] rounded-full bg-black hover:bg-neutral-700 text-white grid place-items-center" aria-label="Berikutnya"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+    <div data-slider class="flex gap-5 lg:gap-9 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2">
+      <% news.forEach(n => { %><%- include('../partials/news-card', { n, cls: 'snap-start shrink-0 basis-[85%] sm:basis-[calc(50%-10px)] lg:basis-[calc((100%-72px)/3)]' }) %><% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="bg-black text-white py-16 md:py-24 text-center">
+  <div class="max-w-[1200px] mx-auto px-5">
+    <h2 class="font-extrabold tracking-[-0.045em] leading-[1.05] text-3xl sm:text-5xl md:text-6xl max-w-3xl mx-auto"><%= S.ctaTitle %></h2>
+    <div class="mt-10 flex justify-center"><%- pill('WhatsApp', 'https://wa.me/' + S.whatsapp, 'light', 'text-lg pl-8 pr-1.5 py-1.5 gap-12') %></div>
+  </div>
+</section>
+<%- include('../partials/foot') %>

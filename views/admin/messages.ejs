@@ -1,0 +1,24 @@
+<%- include('partials/top') %>
+<% if (!items.length) { %><div class="bg-white rounded-2xl border border-neutral-200 p-12 text-center text-neutral-500"><i class="bi bi-inbox text-4xl block mb-2"></i>Belum ada pesan masuk.</div><% } %>
+<div class="space-y-3 max-w-4xl">
+<% items.forEach(m => { %>
+  <details class="group bg-white rounded-2xl border <%= m.read ? 'border-neutral-200' : 'border-black' %>" <%= m.read ? '' : 'open' %>>
+    <summary class="list-none cursor-pointer px-5 py-4 flex items-center gap-3">
+      <span class="w-2.5 h-2.5 rounded-full shrink-0 <%= m.read ? 'bg-neutral-300' : 'bg-black' %>"></span>
+      <div class="min-w-0 flex-1"><p class="font-semibold text-sm truncate"><%= m.name %> <span class="font-normal text-neutral-500">· <%= m.email %></span></p><p class="text-xs text-neutral-500 truncate group-open:hidden"><%= m.message %></p></div>
+      <time class="text-xs text-neutral-500 shrink-0"><%= fmtDate(m.date) %></time><i class="bi bi-chevron-down transition-transform group-open:rotate-180"></i>
+    </summary>
+    <div class="px-5 pb-5 pt-1 border-t border-neutral-100">
+      <p class="whitespace-pre-line text-sm leading-relaxed mt-3"><%= m.message %></p>
+      <p class="mt-3 text-xs text-neutral-500"><% if (m.phone) { %><i class="bi bi-telephone"></i> <%= m.phone %> · <% } %><%= new Date(m.date).toLocaleString('id-ID') %></p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <a href="mailto:<%= m.email %>?subject=Re: Pesan dari website" class="btn !py-2"><i class="bi bi-reply"></i> Balas email</a>
+        <% if (m.phone) { %><a target="_blank" rel="noopener" href="https://wa.me/<%= m.phone.replace(/\D/g,'').replace(/^0/,'62') %>" class="btn-ghost !py-2"><i class="bi bi-whatsapp"></i> WhatsApp</a><% } %>
+        <form method="post" action="/admin/messages/<%= m.id %>/read"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn-ghost !py-2"><i class="bi <%= m.read ? 'bi-envelope' : 'bi-envelope-open' %>"></i> Tandai <%= m.read ? 'belum dibaca' : 'dibaca' %></button></form>
+        <form method="post" action="/admin/messages/<%= m.id %>/delete" data-confirm="Hapus pesan ini?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn-danger"><i class="bi bi-trash"></i> Hapus</button></form>
+      </div>
+    </div>
+  </details>
+<% }) %>
+</div>
+<%- include('partials/bottom') %>

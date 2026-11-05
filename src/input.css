@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { font-family: "Plus Jakarta Sans", system-ui, sans-serif; letter-spacing: -0.02em; @apply bg-white text-neutral-900 antialiased overflow-x-hidden; }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #737373; outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+}
+@layer components {
+  .hero-bg { background: linear-gradient(180deg, #fff 0%, #737373 45%, #0a0a0a 100%); }
+  .tri-br { clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+  .tri-tr { clip-path: polygon(0 0, 100% 0, 100% 100%); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+  .bar span { display: block; height: 100%; width: 0; background: #fff; }
+  .prose-lite p + p { @apply mt-4; }
+  /* Form (publik & admin) */
+  .fld { @apply w-full rounded-lg border border-neutral-300 bg-white px-3.5 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-black focus:ring-2 focus:ring-black/10; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-700 disabled:opacity-50; }
+  .btn-ghost { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm font-medium text-neutral-800 transition hover:bg-neutral-100; }
+  .btn-danger { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition hover:bg-black hover:text-white; }
+}

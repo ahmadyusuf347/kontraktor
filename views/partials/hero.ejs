@@ -1,0 +1,8 @@
+  <section class="max-w-[1200px] mx-auto px-5 pt-14 pb-24 sm:pt-20 sm:pb-32 md:pt-24 md:pb-44">
+    <h1 id="pageTitle" class="text-white font-extrabold tracking-[-0.05em] leading-none text-5xl sm:text-7xl md:text-[5.5rem] md:pl-4"><%= heading %></h1>
+  </section>
+</div>
+<main id="main">
+<% flash.forEach(f => { %>
+  <div class="max-w-[1200px] mx-auto px-5 mt-6"><div class="rounded-lg border px-4 py-3 text-sm <%= f.type==='success' ? 'border-black bg-neutral-100' : 'border-neutral-400 bg-white' %>" role="status"><i class="bi <%= f.type==='success' ? 'bi-check-circle' : 'bi-exclamation-circle' %> me-2"></i><%= f.msg %></div></div>
+<% }) %>

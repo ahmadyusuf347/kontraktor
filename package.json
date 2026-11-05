@@ -1,0 +1,28 @@
+{
+  "name": "kontraktor-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Website profil perusahaan kontraktor + dashboard admin (Node.js, Express, EJS, Tailwind CSS)",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "vendor": "node scripts/copy-vendor.js",
+    "css": "tailwindcss -i ./src/input.css -o ./public/css/app.css --minify",
+    "css:watch": "tailwindcss -i ./src/input.css -o ./public/css/app.css --watch",
+    "build": "npm run vendor && npm run css",
+    "postinstall": "npm run build",
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bootstrap-icons": "^1.11.3",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "gsap": "^3.12.5",
+    "helmet": "^8.0.0",
+    "multer": "^1.4.5-lts.1",
+    "tailwindcss": "^3.4.17"
+  }
+}

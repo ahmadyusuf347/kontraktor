@@ -1,0 +1,63 @@
+<%- include('../partials/head') %>
+<%- include('../partials/hero', { heading: 'About Us' }) %>
+<section class="py-12 md:py-20">
+  <div class="max-w-[1200px] mx-auto px-5">
+    <h2 class="text-center text-4xl md:text-5xl font-semibold tracking-[-0.045em] mb-10 md:mb-16">About Us</h2>
+    <article data-reveal class="relative border border-neutral-900 p-6 sm:p-8 md:px-10 md:py-9">
+      <span class="tri-tr absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 bg-black"></span>
+      <i class="bi bi-clock-history text-5xl"></i>
+      <h3 class="mt-4 md:mt-8 text-2xl md:text-3xl font-semibold tracking-tight">Sejarah singkat</h3>
+      <div class="mt-2 text-base md:text-xl leading-snug text-justify prose-lite"><%- paragraphs(about.history) %></div>
+    </article>
+
+    <% if (timeline.length) { %>
+    <div id="timeline" class="relative mt-12 md:mt-20 mb-12 md:mb-16 overflow-x-auto no-scrollbar">
+      <div class="relative min-w-[420px]">
+        <div id="tlLine" class="absolute left-2 right-2 top-[7px] h-0.5 bg-neutral-900 origin-left"></div>
+        <ol class="relative flex justify-between">
+          <% timeline.forEach((t,i) => { %><li class="flex flex-col <%= i===0 ? 'items-start' : (i===timeline.length-1 ? 'items-end' : 'items-center') %>">
+            <i class="block w-4 h-4 rounded-full <%= i===0 ? 'bg-black' : 'bg-neutral-500' %>"></i><p class="mt-3 text-sm md:text-xl"><%= t.year %></p><% if (t.label) { %><p class="text-[10px] md:text-xs text-neutral-600"><%= t.label %></p><% } %></li><% }) %>
+        </ol>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="grid gap-6 md:grid-cols-2 md:gap-9 <%= timeline.length ? '' : 'mt-12' %>">
+      <% [['Vision','bi-bullseye',about.vision],['Mission','bi-eye',about.mission]].forEach(([t,ic,tx]) => { %>
+      <article data-reveal class="relative border border-neutral-900 p-6 sm:p-8">
+        <i class="bi <%= ic %> text-4xl"></i>
+        <h3 class="mt-4 text-2xl md:text-3xl font-semibold tracking-tight"><%= t %></h3>
+        <div class="mt-3 text-base md:text-xl leading-snug text-justify pb-8 prose-lite"><%- paragraphs(tx) %></div>
+        <span class="tri-br absolute right-0 bottom-0 w-12 h-12 sm:w-16 sm:h-16 bg-black"></span>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="bg-neutral-200 py-14 md:py-20">
+  <div class="max-w-[1200px] mx-auto px-5">
+    <h2 class="text-center text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[-0.045em] mb-10 md:mb-14">Kredibilitas &amp; Legalitas</h2>
+    <div class="grid md:grid-cols-2 gap-x-8">
+      <div data-reveal class="bg-neutral-300 h-56 md:h-[300px] overflow-hidden grid place-items-center">
+        <% if (about.isoImage) { %><img src="<%= about.isoImage %>" alt="Lisensi" class="w-full h-full object-cover"><% } else { %><i class="bi bi-patch-check text-8xl text-neutral-800"></i><% } %>
+      </div>
+      <div data-reveal class="self-center py-6 md:px-6"><h3 class="text-2xl md:text-3xl font-semibold tracking-tight">Izin Resmi &amp; Lisensi</h3><div class="mt-4 text-base md:text-xl leading-snug text-justify prose-lite"><%- paragraphs(about.licenseText) %></div></div>
+      <div data-reveal class="order-4 md:order-3 self-center py-6 md:px-6"><h3 class="text-2xl md:text-3xl font-semibold tracking-tight">Sertifikat &amp; Penghargaan</h3><div class="mt-4 text-base md:text-xl leading-snug text-justify prose-lite"><%- paragraphs(about.certText) %></div></div>
+      <div data-reveal class="order-3 md:order-4 bg-neutral-300 h-56 md:h-[300px] overflow-hidden grid place-items-center">
+        <% if (about.certImage) { %><img src="<%= about.certImage %>" alt="Sertifikat" class="w-full h-full object-cover"><% } else { %><i class="bi bi-award text-8xl text-neutral-800"></i><% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if (whyus.length) { %>
+<section class="py-14 md:py-20">
+  <h2 class="text-center text-3xl sm:text-4xl md:text-5xl font-semibold tracking-[-0.045em] mb-10 md:mb-14 px-5">Why Choose Us</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 bg-neutral-100">
+    <% whyus.forEach((w,i) => { %><div data-reveal class="p-6 md:p-8 border-b sm:border-b-0 border-neutral-300 <%= i % 2 ? 'sm:border-l' : '' %> <%= i ? 'lg:border-l' : '' %> lg:min-h-[180px]">
+      <h3 class="font-semibold text-sm md:text-base"><i class="bi bi-check2-circle me-2"></i><%= w.title %></h3><p class="mt-3 text-xs md:text-sm leading-snug text-neutral-700"><%= w.text %></p></div><% }) %>
+  </div>
+</section>
+<% } %>
+<%- include('../partials/foot') %>

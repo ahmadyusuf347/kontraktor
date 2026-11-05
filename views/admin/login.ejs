@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title><%= title %> – <%= S.siteName %></title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.css"><link rel="stylesheet" href="/css/app.css?v=<%= v %>"></head>
+<body class="min-h-screen bg-black grid lg:grid-cols-2">
+  <div class="hidden lg:flex flex-col justify-between p-12 text-white hero-bg">
+    <a href="/" class="flex items-center gap-2 text-2xl font-bold text-black" aria-label="<%= S.siteName %>"><%- logo('light', 'h-12', 'text-2xl') %></a>
+    <div><h2 class="text-5xl font-extrabold tracking-[-0.04em] leading-tight">Kelola konten<br>website Anda.</h2><p class="mt-4 text-white/70 max-w-sm">Berita, project, tim, dan pesan pelanggan dalam satu dashboard.</p></div>
+    <p class="text-xs text-white/50">© <%= new Date().getFullYear() %> <%= S.siteName %></p>
+  </div>
+  <div class="flex items-center justify-center p-6 bg-white">
+    <form method="post" action="/admin/login" class="w-full max-w-sm space-y-5">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <a href="/" class="lg:hidden inline-flex items-center gap-2 text-xl font-bold" aria-label="<%= S.siteName %>"><%- logo('light', 'h-10', 'text-xl') %></a>
+      <div><h1 class="text-3xl font-extrabold tracking-tight">Masuk Admin</h1><p class="mt-1 text-sm text-neutral-600">Silakan login untuk melanjutkan.</p></div>
+      <% if (error) { %><div class="rounded-lg border border-neutral-900 bg-neutral-100 px-4 py-3 text-sm" role="alert"><i class="bi bi-exclamation-circle me-2"></i><%= error %></div><% } %>
+      <div><label for="u" class="block text-sm font-medium mb-1.5">Username</label><input id="u" name="username" class="fld" autocomplete="username" required autofocus></div>
+      <div><label for="p" class="block text-sm font-medium mb-1.5">Password</label><input id="p" type="password" name="password" class="fld" autocomplete="current-password" required></div>
+      <button class="btn w-full py-3"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>
+      <a href="/" class="block text-center text-sm text-neutral-600 hover:underline"><i class="bi bi-arrow-left"></i> Kembali ke website</a>
+    </form>
+  </div>
+</body></html>

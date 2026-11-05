@@ -1,0 +1,16 @@
+<%- include('../partials/head') %>
+<%- include('../partials/hero', { heading: 'Project' }) %>
+<section class="py-12 md:py-20">
+  <div class="max-w-[1200px] mx-auto px-5">
+    <h2 class="text-center text-3xl sm:text-4xl md:text-6xl font-semibold tracking-[-0.045em] mb-8 md:mb-12">Project Kami</h2>
+    <% const cats = [...new Set(projects.map(p => p.category))]; %>
+    <div data-filter class="flex flex-wrap justify-center gap-3 mb-10 md:mb-14" role="group" aria-label="Filter kategori">
+      <% ['Semua', ...cats].forEach((c,i) => { %><button data-cat="<%= c %>" class="px-5 py-2 rounded-full text-sm border border-neutral-900 transition-colors <%= i===0 ? 'bg-black text-white' : 'hover:bg-neutral-100' %>"><%= c %></button><% }) %>
+    </div>
+    <div data-filter-grid class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-9">
+      <% projects.forEach(p => { %><%- include('../partials/project-card', { p }) %><% }) %>
+    </div>
+    <% if (!projects.length) { %><p class="text-center text-neutral-500">Belum ada project.</p><% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>

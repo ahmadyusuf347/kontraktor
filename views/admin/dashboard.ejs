@@ -1,0 +1,34 @@
+<%- include('partials/top') %>
+<% if (defaultPw) { %><div class="mb-6 rounded-xl border border-black bg-white p-4 flex gap-3 items-start"><i class="bi bi-shield-exclamation text-2xl"></i><div class="text-sm"><p class="font-semibold">Ganti password bawaan Anda.</p><p class="text-neutral-600">Akun masih memakai <code>admin / admin123</code>. <a class="underline font-medium" href="/admin/account">Ubah sekarang</a>.</p></div></div><% } %>
+<div class="grid grid-cols-2 xl:grid-cols-5 gap-4">
+  <% [['Berita', counts.news, 'bi-newspaper', '/admin/r/news'], ['Project', counts.projects, 'bi-building', '/admin/r/projects'], ['Layanan', counts.services, 'bi-tools', '/admin/r/services'], ['Anggota Tim', counts.team, 'bi-people', '/admin/r/team'], ['Pesan Baru', unread, 'bi-envelope', '/admin/messages']].forEach(([l, n, ic, h], i) => { %>
+    <a href="<%= h %>" class="rounded-2xl p-5 border transition hover:-translate-y-0.5 hover:shadow-md <%= i === 4 ? 'bg-black text-white border-black col-span-2 xl:col-span-1' : 'bg-white border-neutral-200' %>">
+      <i class="bi <%= ic %> text-2xl <%= i === 4 ? '' : 'text-neutral-500' %>"></i><p class="mt-3 text-3xl font-extrabold tracking-tight"><%= n %></p><p class="text-sm <%= i === 4 ? 'text-white/70' : 'text-neutral-600' %>"><%= l %></p></a>
+  <% }) %>
+</div>
+<div class="mt-6 grid lg:grid-cols-3 gap-6">
+  <section class="lg:col-span-2 bg-white rounded-2xl border border-neutral-200">
+    <div class="px-5 py-4 border-b border-neutral-200 flex items-center justify-between"><h2 class="font-semibold">Pesan terbaru</h2><a href="/admin/messages" class="text-sm underline">Lihat semua</a></div>
+    <% if (!recent.length) { %><p class="p-8 text-center text-sm text-neutral-500"><i class="bi bi-inbox text-3xl block mb-2"></i>Belum ada pesan masuk.</p><% } %>
+    <ul class="divide-y divide-neutral-200"><% recent.forEach(m => { %>
+      <li class="px-5 py-3.5 flex items-start gap-3"><span class="mt-1.5 w-2 h-2 rounded-full shrink-0 <%= m.read ? 'bg-neutral-300' : 'bg-black' %>"></span>
+        <div class="min-w-0"><p class="text-sm font-semibold"><%= m.name %> <span class="font-normal text-neutral-500">· <%= m.email %></span></p><p class="text-sm text-neutral-600 truncate"><%= m.message %></p></div>
+        <time class="ml-auto text-xs text-neutral-500 shrink-0"><%= fmtDate(m.date) %></time></li><% }) %></ul>
+  </section>
+  <section class="bg-white rounded-2xl border border-neutral-200">
+    <div class="px-5 py-4 border-b border-neutral-200"><h2 class="font-semibold">Aksi cepat</h2></div>
+    <div class="p-4 grid gap-2">
+      <a href="/admin/r/news/new" class="btn-ghost justify-start"><i class="bi bi-plus-lg"></i> Tulis berita</a>
+      <a href="/admin/r/projects/new" class="btn-ghost justify-start"><i class="bi bi-plus-lg"></i> Tambah project</a>
+      <a href="/admin/r/team/new" class="btn-ghost justify-start"><i class="bi bi-plus-lg"></i> Tambah anggota tim</a>
+      <a href="/admin/s/settings" class="btn-ghost justify-start"><i class="bi bi-gear"></i> Pengaturan & logo</a>
+    </div>
+  </section>
+</div>
+<section class="mt-6 bg-white rounded-2xl border border-neutral-200">
+  <div class="px-5 py-4 border-b border-neutral-200 flex items-center justify-between"><h2 class="font-semibold">Berita terbaru</h2><a href="/admin/r/news" class="text-sm underline">Kelola</a></div>
+  <ul class="divide-y divide-neutral-200"><% latestNews.forEach(n => { %>
+    <li class="px-5 py-3 flex items-center gap-3"><%- media(n.image, n.title, 'w-12 h-12 rounded-md object-cover shrink-0') %><div class="min-w-0"><p class="text-sm font-medium truncate"><%= n.title %></p><p class="text-xs text-neutral-500"><%= fmtDate(n.date) %></p></div>
+      <a href="/admin/r/news/<%= n.id %>/edit" class="ml-auto btn-ghost !py-1.5 !px-3"><i class="bi bi-pencil"></i> Edit</a></li><% }) %></ul>
+</section>
+<%- include('partials/bottom') %>

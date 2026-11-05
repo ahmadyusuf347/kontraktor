@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title><%= title %> – Admin <%= S.siteName %></title>
+<link rel="icon" href="/images/favicon-baru.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/app.css?v=<%= v %>">
+<script src="/js/admin.js?v=<%= v %>" defer></script>
+</head>
+<body class="bg-neutral-100 min-h-screen text-neutral-900">
+<%
+  const groups = [
+    ['Utama', [['Dashboard', '/admin', 'bi-speedometer2']]],
+    ['Konten Home', ['slides', 'stats', 'services'].map(k => [collections[k].label, '/admin/r/' + k, collections[k].icon])],
+    ['Konten Website', ['projects', 'news', 'team'].map(k => [collections[k].label, '/admin/r/' + k, collections[k].icon])],
+    ['Halaman About', [[singles.about.label, '/admin/s/about', singles.about.icon], ...['timeline', 'whyus'].map(k => [collections[k].label, '/admin/r/' + k, collections[k].icon])]],
+    ['Lainnya', [['Pesan Masuk', '/admin/messages', 'bi-envelope', unread], [singles.settings.label, '/admin/s/settings', singles.settings.icon], ['Akun Admin', '/admin/account', 'bi-person-gear']]]
+  ];
+  const on = h => h === '/admin' ? path === '/admin' || path === '/admin/' : path.startsWith(h);
+%>
+<div id="sideOverlay" class="hidden fixed inset-0 bg-black/60 z-40 lg:hidden"></div>
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-black text-white flex flex-col -translate-x-full lg:translate-x-0 transition-transform duration-300">
+  <div class="h-16 px-5 flex items-center justify-between border-b border-white/10 shrink-0">
+    <a href="/admin" class="flex items-center gap-2 font-bold text-lg" aria-label="<%= S.siteName %> – dashboard"><%- logo('dark', 'h-8 max-w-[120px] object-contain', 'text-lg') %> <span class="text-[10px] font-medium border border-white/40 rounded px-1.5 py-0.5 text-white/70">ADMIN</span></a>
+    <button id="sideClose" class="lg:hidden text-xl" aria-label="Tutup sidebar"><i class="bi bi-x-lg"></i></button>
+  </div>
+  <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-5" aria-label="Menu admin">
+    <% groups.forEach(([g, items]) => { %>
+      <div>
+        <p class="px-3 mb-1.5 text-[11px] uppercase tracking-wider text-white/40"><%= g %></p>
+        <% items.forEach(([t, h, ic, badge]) => { %>
+          <a href="<%= h %>" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors <%= on(h) ? 'bg-white text-black font-semibold' : 'text-white/70 hover:bg-white/10 hover:text-white' %>">
+            <i class="bi <%= ic %> text-base"></i><span class="flex-1"><%= t %></span>
+            <% if (badge) { %><span class="text-[11px] rounded-full px-2 py-0.5 <%= on(h) ? 'bg-black text-white' : 'bg-white text-black' %>"><%= badge %></span><% } %>
+          </a>
+        <% }) %>
+      </div>
+    <% }) %>
+  </nav>
+  <div class="p-3 border-t border-white/10 space-y-1 shrink-0">
+    <a href="/" target="_blank" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white"><i class="bi bi-box-arrow-up-right"></i> Lihat website</a>
+    <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button class="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white"><i class="bi bi-box-arrow-left"></i> Keluar</button></form>
+  </div>
+</aside>
+<div class="lg:pl-64 min-h-screen flex flex-col">
+  <header class="sticky top-0 z-30 h-16 bg-white/90 backdrop-blur border-b border-neutral-200 px-4 md:px-8 flex items-center gap-3">
+    <button id="sideOpen" class="lg:hidden w-10 h-10 grid place-items-center text-2xl -ml-2" aria-label="Buka sidebar"><i class="bi bi-list"></i></button>
+    <h1 class="text-lg md:text-xl font-bold tracking-tight truncate"><%= title %></h1>
+    <div class="ml-auto flex items-center gap-3 text-sm">
+      <a href="/admin/messages" class="relative w-10 h-10 grid place-items-center rounded-full hover:bg-neutral-100" aria-label="Pesan masuk"><i class="bi bi-bell text-lg"></i><% if (unread) { %><span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-black ring-2 ring-white"></span><% } %></a>
+      <span class="hidden sm:grid w-9 h-9 rounded-full bg-black text-white place-items-center font-semibold">A</span>
+    </div>
+  </header>
+  <main class="flex-1 p-4 md:p-8">
+  <% flash.forEach(f => { %>
+    <div data-flash class="mb-5 rounded-lg border px-4 py-3 text-sm flex items-center gap-2 <%= f.type === 'success' ? 'border-black bg-white' : 'border-neutral-400 bg-neutral-200' %>" role="status"><i class="bi <%= f.type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' %>"></i><%= f.msg %></div>
+  <% }) %>
