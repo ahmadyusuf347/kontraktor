@@ -3,6 +3,7 @@
   const hasPub = def.fields.some(f => f.name === 'published');
   const cell = (name, it) => {
     const f = def.fields.find(x => x.name === name) || { type: 'text' }, v = it[name];
+    if (f.type === 'media') return v ? (it[name + 'Type'] === 'video' ? `<video src="${esc(v)}#t=0.1" muted playsinline preload="metadata" class="w-16 h-12 rounded-md object-cover bg-neutral-200"></video>` : `<img src="${esc(v)}" alt="" loading="lazy" class="w-16 h-12 rounded-md object-cover">`) : `<span class="w-16 h-12 rounded-md bg-neutral-200 text-neutral-400 grid place-items-center"><i class="bi bi-film"></i></span>`;
     if (f.type === 'image') return media(v, it.title || it.name || '', 'w-12 h-12 rounded-md object-cover', 'bi-image');
     if (f.type === 'checkbox') return `<span class="inline-block text-xs rounded-full px-2.5 py-0.5 border ${v === false ? 'border-neutral-300 text-neutral-500' : 'border-black bg-black text-white'}">${v === false ? 'Draft' : 'Tayang'}</span>`;
     if (f.type === 'date') return esc(fmtDate(v));
@@ -19,7 +20,7 @@
   <% if (!items.length) { %><div class="p-12 text-center text-neutral-500"><i class="bi bi-folder2-open text-4xl block mb-2"></i>Belum ada data. <a class="underline" href="/admin/r/<%= key %>/new">Tambah sekarang</a>.</div><% } else { %>
   <table class="w-full text-sm hidden md:table">
     <thead class="bg-neutral-50 text-left text-xs uppercase tracking-wider text-neutral-500"><tr>
-      <% def.cols.forEach(c => { %><th class="px-5 py-3 font-medium"><%= c === 'image' || c === 'photo' ? '' : labelOf(c) %></th><% }) %><th class="px-5 py-3 text-right font-medium">Aksi</th></tr></thead>
+      <% def.cols.forEach(c => { %><th class="px-5 py-3 font-medium"><%= c === 'image' || c === 'photo' || c === 'media' ? '' : labelOf(c) %></th><% }) %><th class="px-5 py-3 text-right font-medium">Aksi</th></tr></thead>
     <tbody class="divide-y divide-neutral-200">
       <% items.forEach(it => { %><tr data-row class="hover:bg-neutral-50">
         <% def.cols.forEach(c => { %><td class="px-5 py-3 align-middle <%= c === 'text' || c === 'description' ? 'max-w-xs' : '' %>"><%- cell(c, it) %></td><% }) %>
@@ -33,7 +34,7 @@
   <ul class="md:hidden divide-y divide-neutral-200">
     <% items.forEach(it => { %><li data-row class="p-4">
       <div class="flex gap-3">
-        <% const img = def.cols.find(c => ['image','photo'].includes(c)); if (img) { %><div class="shrink-0"><%- cell(img, it) %></div><% } %>
+        <% const img = def.cols.find(c => ['image','photo','media'].includes(c)); if (img) { %><div class="shrink-0"><%- cell(img, it) %></div><% } %>
         <div class="min-w-0 flex-1 space-y-1 text-sm"><% def.cols.filter(c => c !== img).forEach((c, i) => { %><div class="<%= i === 0 ? 'font-semibold' : 'text-neutral-600 text-xs' %>"><%- cell(c, it) %></div><% }) %></div>
       </div>
       <div class="mt-3 flex gap-2">

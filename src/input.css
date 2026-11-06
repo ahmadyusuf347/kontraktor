@@ -9,7 +9,9 @@
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 }
 @layer components {
-  .hero-bg { background: linear-gradient(180deg, #fff 0%, #737373 45%, #0a0a0a 100%); }
+  .hero-bg { background: linear-gradient(180deg, #0a0a0a 0%, #262626 55%, #525252 100%); }
+  .logo-img { height: var(--lh, 36px); width: auto; max-width: 220px; object-fit: contain; }
+  @media (min-width: 768px) { .logo-img { height: var(--lhm, var(--lh, 36px)); } }
   .tri-br { clip-path: polygon(100% 0, 100% 100%, 0 100%); }
   .tri-tr { clip-path: polygon(0 0, 100% 0, 100% 100%); }
   .no-scrollbar::-webkit-scrollbar { display: none; }

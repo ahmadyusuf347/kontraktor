@@ -1,9 +1,12 @@
 <%- include('../partials/head') %>
 <main id="main">
-<section class="relative isolate bg-black text-white overflow-hidden" data-hero data-slides="<%= JSON.stringify(slides.map(s => ({ t: s.title, s: s.text }))) %>">
-  <% if (hasVideo) { %>
-  <video data-hero-video class="absolute inset-0 -z-20 w-full h-full object-cover" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1"><source src="/videos/heroes-home.mp4" type="video/mp4"></video>
-  <% } %>
+<section class="relative isolate bg-black text-white overflow-hidden" data-hero data-slides="<%= JSON.stringify(slideData) %>">
+  <% layers.forEach((L, i) => { %>
+  <div data-layer class="absolute inset-0 -z-20" style="opacity:<%= i === firstLayer ? 1 : 0 %>" aria-hidden="true">
+    <% if (L.type === 'video') { %><video class="w-full h-full object-cover" <%= i === firstLayer ? 'autoplay' : '' %> muted loop playsinline preload="<%= i === firstLayer ? 'auto' : 'metadata' %>" tabindex="-1"><source src="<%= L.src %>" type="video/<%= /\.webm$/i.test(L.src) ? 'webm' : 'mp4' %>"></video>
+    <% } else { %><img src="<%= L.src %>" alt="" class="w-full h-full object-cover"><% } %>
+  </div>
+  <% }) %>
   <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/85 via-black/55 to-black/25" aria-hidden="true"></div>
   <div class="absolute inset-x-0 bottom-0 h-40 -z-10 bg-gradient-to-t from-black/60 to-transparent" aria-hidden="true"></div>
   <div class="max-w-[1200px] mx-auto px-5 grid md:grid-cols-12 items-end gap-6 pt-10 md:pt-16 min-h-[560px] md:min-h-[680px]">

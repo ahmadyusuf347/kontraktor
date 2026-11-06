@@ -8,7 +8,7 @@
     <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:gap-0">
       <div class="flex flex-col gap-6 lg:pr-10">
         <a href="/" class="flex items-center gap-2" aria-label="<%= S.siteName %>">
-          <%- logo('dark', 'h-10 md:h-12', 'text-2xl') %>
+          <%- logo('dark', 40, 48, 'text-2xl') %>
         </a>
         <p class="text-sm text-white/60 max-w-xs leading-relaxed"><%= S.footerText %></p>
         <div>
@@ -23,13 +23,13 @@
       <div class="lg:border-l border-white/20 lg:pl-10">
         <h4 class="text-lg font-semibold">Service</h4>
         <ul class="mt-4 space-y-3 text-white/70 font-light">
-          <% fServices.forEach((s,i) => { %><li class="flex items-center gap-2"><i class="w-1.5 h-1.5 rounded-full <%= i===0 ? 'bg-white' : 'bg-transparent' %>"></i><a href="/services" class="hover:text-white"><%= s.title %></a></li><% }) %>
+          <% fServices.forEach((s,i) => { %><li class="group flex w-fit items-center gap-2"><i class="w-1.5 h-1.5 rounded-full bg-transparent transition-colors duration-200 group-hover:bg-white group-focus-within:bg-white"></i><a href="/services" class="transition-colors group-hover:text-white group-focus-within:text-white"><%= s.title %></a></li><% }) %>
         </ul>
       </div>
       <div class="lg:border-l border-white/20 lg:pl-10">
         <h4 class="text-lg font-semibold">Menu</h4>
         <ul class="mt-4 space-y-3 text-white/70 font-light">
-          <% fLinks.forEach(([t,h],i) => { %><li class="flex items-center gap-2"><i class="w-1.5 h-1.5 rounded-full <%= i===0 ? 'bg-white' : 'bg-transparent' %>"></i><a href="<%= h %>" class="hover:text-white"><%= t %></a></li><% }) %>
+          <% fLinks.forEach(([t,h],i) => { %><li class="group flex w-fit items-center gap-2"><i class="w-1.5 h-1.5 rounded-full bg-transparent transition-colors duration-200 group-hover:bg-white group-focus-within:bg-white"></i><a href="<%= h %>" class="transition-colors group-hover:text-white group-focus-within:text-white"><%= t %></a></li><% }) %>
         </ul>
       </div>
       <div class="lg:border-l border-white/20 lg:pl-10">

@@ -1,6 +1,12 @@
 node_modules/
-data/db.json
-data/.secret
+.env
+.env.*
+!.env.example
+.vercel/
+data/
+public/css/app.css
+public/vendor/
 public/uploads/*
 !public/uploads/.gitkeep
-.env
+public/videos/*
+!public/videos/.gitkeep

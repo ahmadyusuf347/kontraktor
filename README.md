@@ -1,51 +1,56 @@
 # Kontraktor – Website Profil + Dashboard Admin
 
-Node.js · Express · EJS · Tailwind CSS · Bootstrap Icons · GSAP · tampilan monokrom (logo & foto tetap berwarna) & responsif.
+Express · EJS · Tailwind CSS · Bootstrap Icons · GSAP · **Supabase (Postgres + Storage)** · siap deploy di **Vercel**.
+Tampilan monokrom & responsif; logo dan foto tetap berwarna.
 
-## Menjalankan
+> **Deploy ke Vercel:** ikuti panduan lengkap di **[DEPLOY-VERCEL.md](DEPLOY-VERCEL.md)**.
+
+## Menjalankan di lokal
+Butuh Node.js 20+ dan sebuah project Supabase (gratis).
 ```bash
-npm install        # otomatis menyalin aset vendor & membangun CSS (postinstall)
-npm start          # http://localhost:3000
-npm run dev        # auto-restart saat file server berubah
-npm run css:watch  # (terminal lain) bangun ulang Tailwind saat edit tampilan
+npm install                 # otomatis menyalin aset vendor & membangun CSS
+cp .env.example .env        # isi kredensial Supabase (lihat DEPLOY-VERCEL.md bagian 3-4)
+npm run db:setup            # buat tabel + bucket + data awal (sekali saja)
+npm start                   # http://localhost:3000   |  admin: /admin
+npm run dev                 # auto-restart saat file server berubah
+npm run css:watch           # (terminal lain) bangun ulang Tailwind saat edit tampilan
 ```
-Admin: **http://localhost:3000/admin** — login awal `admin` / `admin123` (**segera ganti** di menu *Akun Admin*).
 
-## Logo (berwarna)
-Taruh logo berwarna di `public/images/Logo.png` (atau unggah lewat *Pengaturan Website*). Logo ditampilkan apa adanya, tanpa filter.
-- `Logo.png` dipakai di latar terang (header halaman dalam, halaman login).
-- Latar gelap (header Home, footer, sidebar admin) memakai `public/images/Logo-dark.png` bila ada
-  (versi dengan tulisan putih) atau unggahan "Logo untuk latar gelap" di Pengaturan.
-  Jika tidak ada, `Logo.png` otomatis ditaruh pada lencana putih agar tetap terbaca.
-Bila file logo tidak ditemukan, tampil nama perusahaan.
+## Perintah
+| Perintah | Fungsi |
+|---|---|
+| `npm run db:setup` | Membuat tabel (RLS aktif), bucket Storage, dan data awal. Aman diulang. |
+| `npm run db:schema` | Mencetak skema SQL (`> supabase/schema.sql`) dari `lib/resources.js`. |
+| `npm run db:import -- data/db.json --replace` | Memindahkan data versi lama (JSON + file upload lokal) ke Supabase. |
+| `npm run build` | Menyalin aset vendor + membangun CSS (dijalankan otomatis oleh Vercel). |
 
-## Video hero (Home)
-Taruh video di `public/videos/heroes-home.mp4`. Video diputar otomatis, tanpa suara, berulang, dengan lapisan gelap tipis agar teks terbaca.
-Tanpa file ini, hero tampil hitam polos. Saran: H.264, 1280x720 atau 1920x1080, 8-15 detik, tanpa audio, di bawah ~8 MB.
-Pengguna dengan pengaturan "reduce motion" tidak diputarkan videonya.
-
-## Fitur dashboard (sidebar)
-Dashboard (ringkasan) · Hero Slides · Statistik · Layanan · Project · Berita · Tim ·
-Halaman About (teks, Timeline, Why Choose Us) · Pesan Masuk (dari form Contact) · Pengaturan (logo, kontak, sosmed, SEO) · Akun.
-Setiap konten bisa ditambah, diedit, dihapus, diunggah gambarnya, dan (Berita/Project) disembunyikan sebagai draft.
+## Cara kerja penyimpanan
+- **Konten** → tabel Postgres di Supabase, diakses server lewat `DATABASE_URL` (RLS aktif tanpa policy, jadi kunci `anon` tidak bisa mengakses).
+- **Gambar & video** → Supabase Storage (bucket publik `uploads`). Karena Vercel membatasi body request ±4,5 MB, browser admin **mengunggah langsung ke Supabase** memakai signed upload URL; server memverifikasi tipe, ukuran, dan isi file (magic bytes) saat form disimpan.
+- **Sesi login** → cookie bertanda tangan (`SESSION_SECRET`), tanpa memori server.
 
 ## Struktur
 ```
-server.js            entri aplikasi
+server.js            aplikasi Express (diekspor untuk Vercel)
+api/index.js         entry serverless Vercel;  vercel.json = konfigurasi deploy
 routes/site.js       halaman publik, form kontak, sitemap
-routes/admin.js      login, CRUD, upload, pesan, akun
-lib/resources.js     definisi kolom tiap konten (ubah di sini untuk menambah field)
-lib/db.js            penyimpanan JSON (data/db.json, dibuat otomatis saat pertama jalan)
+routes/admin.js      login, CRUD, izin unggah, pesan, akun
+lib/db.js            akses Postgres (pg)      lib/schema.js   skema dari resources
+lib/storage.js       Supabase Storage         lib/resources.js definisi kolom tiap konten
+scripts/             db-setup, db-import, schema-sql, copy-vendor
+supabase/schema.sql  skema SQL siap tempel di SQL Editor
 views/               template EJS (site/, admin/, partials/)
 src/input.css        sumber Tailwind  ->  public/css/app.css
-public/uploads/      gambar unggahan admin
 ```
 
-## Deploy
-GitHub Pages **tidak bisa** menjalankan Node.js. Gunakan VPS (Nginx + PM2), Render, Railway, Fly.io, dsb.
-Penting: folder `data/` dan `public/uploads/` harus berada di **penyimpanan permanen** (persistent disk/volume),
-dan di-backup berkala. Set variabel pada `.env.example` (terutama `SESSION_SECRET`, `COOKIE_SECURE`, `TRUST_PROXY`).
+## Dashboard admin
+Hero Slides (gambar/video latar + durasi) · Statistik · Layanan · Project · Berita · Tim · Halaman About (teks, Timeline, Why Choose Us) · Pesan Masuk · Pengaturan (logo, kontak, sosmed, SEO) · Akun.
+Tambah, edit, hapus, unggah gambar/video; Berita & Project bisa disembunyikan sebagai draft.
 
-## Keamanan yang sudah ada
-Password di-hash (bcrypt) · session cookie httpOnly · token CSRF di semua form · rate-limit login & kontak ·
-honeypot anti-bot · validasi & batas ukuran/tipe upload (JPG/PNG/WebP/GIF, 5 MB) · header Helmet · output di-escape.
+## Logo
+Taruh logo berwarna di `public/images/Logo.png` (dipakai bila belum ada unggahan) atau unggah lewat **Pengaturan Website**
+(kolom *Logo*; opsional *Logo untuk latar gelap*). Logo ditampilkan apa adanya tanpa filter.
+
+## Keamanan
+Password di-hash (bcrypt) · cookie sesi httpOnly + secure + signed · token CSRF di semua form · rate-limit login & kontak ·
+honeypot anti-bot · verifikasi file unggahan (tipe, ukuran, magic bytes) · RLS Supabase aktif · header Helmet · output di-escape.

@@ -43,29 +43,43 @@
   // Judul halaman
   if (hasGsap && !reduce && $('#pageTitle')) gsap.from('#pageTitle', { y: 40, opacity: 0, duration: 1, ease: 'power3.out' });
 
-  // Hero slider (Home)
+  // Hero slider (Home): teks + latar gambar/video per slide (crossfade)
   const hero = $('[data-hero]');
   if (hero && hasGsap) {
     let slides = []; try { slides = JSON.parse(hero.dataset.slides); } catch (e) {}
     const title = $('.hero-title', hero), sub = $('.hero-sub', hero);
-    const fills = $$('.bar button', hero).map(b => b.firstElementChild), bars = $$('.bar button', hero);
+    const bars = $$('.bar button', hero), fills = bars.map(b => b.firstElementChild);
+    const layers = $$('[data-layer]', hero);
+    layers.forEach(el => { const v = $('video', el); if (v) { v.muted = true; v.addEventListener('error', () => console.warn('[hero] Video gagal dimuat/diputar. Gunakan MP4 H.264 atau WebM.')); } });
+    let curLayer = slides[0] ? slides[0].l : -1, first = true;
+    const setLayer = l => {
+      layers.forEach((el, k) => {
+        const on = k === l, v = $('video', el);
+        gsap.to(el, { opacity: on ? 1 : 0, duration: reduce || first ? 0 : 1, overwrite: true });
+        if (v) {
+          if (on) { if (reduce) v.pause(); else v.play().catch(e => console.warn('[hero] Autoplay diblokir:', e.message)); }
+          else setTimeout(() => { if (curLayer !== k) v.pause(); }, 1100);
+        }
+      });
+      curLayer = l;
+    };
     if (slides.length) {
       let idx = 0, tl;
       const show = i => {
         idx = i; title.textContent = slides[i].t; sub.textContent = slides[i].s;
+        if (slides[i].l !== curLayer || first) setLayer(slides[i].l);
+        first = false;
         gsap.set(fills, { width: 0 }); gsap.set(fills.slice(0, i), { width: '100%' });
         if (tl) tl.kill();
         tl = gsap.timeline({ onComplete: () => change((i + 1) % slides.length) });
         if (!reduce) tl.fromTo([title, sub], { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: .8, stagger: .12, ease: 'power3.out' }, 0);
-        tl.fromTo(fills[i], { width: 0 }, { width: '100%', duration: 5, ease: 'none' }, 0);
+        tl.fromTo(fills[i], { width: 0 }, { width: '100%', duration: slides[i].d || 6, ease: 'none' }, 0);
       };
       const change = i => reduce ? show(i) : gsap.to([title, sub], { opacity: 0, y: -15, duration: .25, onComplete: () => show(i) });
       bars.forEach((b, i) => b.addEventListener('click', () => { if (i !== idx) change(i); }));
-      if (slides.length > 1) show(0); else gsap.set(fills, { width: '100%' });
+      if (slides.length > 1) show(0); else { setLayer(slides[0].l); gsap.set(fills, { width: '100%' }); }
     }
     if (!reduce && $('.hero-img')) gsap.from('.hero-img', { x: 60, opacity: 0, duration: 1.1, ease: 'power3.out' });
-    const vid = $('[data-hero-video]');
-    if (vid) { vid.muted = true; if (reduce) vid.pause(); else vid.play().catch(() => {}); }
   }
 
   // Slider kartu (scroll-snap + tombol)

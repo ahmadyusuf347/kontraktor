@@ -5,14 +5,14 @@
 <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.css"><link rel="stylesheet" href="/css/app.css?v=<%= v %>"></head>
 <body class="min-h-screen bg-black grid lg:grid-cols-2">
   <div class="hidden lg:flex flex-col justify-between p-12 text-white hero-bg">
-    <a href="/" class="flex items-center gap-2 text-2xl font-bold text-black" aria-label="<%= S.siteName %>"><%- logo('light', 'h-12', 'text-2xl') %></a>
+    <a href="/" class="flex items-center gap-2 text-2xl font-bold text-white" aria-label="<%= S.siteName %>"><%- logo('dark', 44, 48, 'text-2xl') %></a>
     <div><h2 class="text-5xl font-extrabold tracking-[-0.04em] leading-tight">Kelola konten<br>website Anda.</h2><p class="mt-4 text-white/70 max-w-sm">Berita, project, tim, dan pesan pelanggan dalam satu dashboard.</p></div>
     <p class="text-xs text-white/50">© <%= new Date().getFullYear() %> <%= S.siteName %></p>
   </div>
   <div class="flex items-center justify-center p-6 bg-white">
     <form method="post" action="/admin/login" class="w-full max-w-sm space-y-5">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <a href="/" class="lg:hidden inline-flex items-center gap-2 text-xl font-bold" aria-label="<%= S.siteName %>"><%- logo('light', 'h-10', 'text-xl') %></a>
+      <a href="/" class="lg:hidden inline-flex items-center gap-2 text-xl font-bold" aria-label="<%= S.siteName %>"><span class="inline-flex bg-black text-white rounded-xl px-4 py-2"><%- logo('dark', 30, 34, 'text-xl') %></span></a>
       <div><h1 class="text-3xl font-extrabold tracking-tight">Masuk Admin</h1><p class="mt-1 text-sm text-neutral-600">Silakan login untuk melanjutkan.</p></div>
       <% if (error) { %><div class="rounded-lg border border-neutral-900 bg-neutral-100 px-4 py-3 text-sm" role="alert"><i class="bi bi-exclamation-circle me-2"></i><%= error %></div><% } %>
       <div><label for="u" class="block text-sm font-medium mb-1.5">Username</label><input id="u" name="username" class="fld" autocomplete="username" required autofocus></div>

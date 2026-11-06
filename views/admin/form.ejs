@@ -1,5 +1,5 @@
 <%- include('partials/top') %>
-<form method="post" action="<%= action %>" enctype="multipart/form-data" class="max-w-3xl bg-white rounded-2xl border border-neutral-200 p-5 md:p-8 space-y-6">
+<form method="post" action="<%= action %>" data-direct-upload class="max-w-3xl bg-white rounded-2xl border border-neutral-200 p-5 md:p-8 space-y-6">
   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <% if (errors.length) { %><div class="rounded-lg border border-black bg-neutral-100 px-4 py-3 text-sm" role="alert"><p class="font-semibold mb-1"><i class="bi bi-exclamation-circle me-1"></i> Periksa kembali isian Anda:</p><ul class="list-disc ps-5"><% errors.forEach(e => { %><li><%= e %></li><% }) %></ul></div><% } %>
   <% def.fields.forEach(f => { const v = item[f.name]; const id = 'f_' + f.name; %>
@@ -10,13 +10,14 @@
         <label for="<%= id %>" class="block text-sm font-medium mb-1.5"><%= f.label %><% if (f.required) { %> <span class="text-neutral-500">*</span><% } %></label>
         <% if (f.type === 'textarea') { %><textarea id="<%= id %>" name="<%= f.name %>" rows="<%= f.rows || 4 %>" class="fld"><%= v ?? '' %></textarea>
         <% } else if (f.type === 'select') { %><select id="<%= id %>" name="<%= f.name %>" class="fld"><% f.options.forEach(o => { %><option <%= v === o ? 'selected' : '' %>><%= o %></option><% }) %></select>
-        <% } else if (f.type === 'image') { %>
+        <% } else if (f.type === 'image' || f.type === 'media') { const isM = f.type === 'media'; %>
           <div class="flex items-start gap-4">
-            <div id="pv_<%= f.name %>" class="w-28 h-28 rounded-lg border border-neutral-300 bg-neutral-100 overflow-hidden grid place-items-center text-neutral-400 shrink-0"><% if (v) { %><img src="<%= v %>" alt="" class="w-full h-full object-cover"><% } else { %><i class="bi bi-image text-3xl"></i><% } %></div>
+            <div id="pv_<%= f.name %>" class="<%= isM ? 'w-40' : 'w-28' %> h-28 rounded-lg border border-neutral-300 bg-neutral-100 overflow-hidden grid place-items-center text-neutral-400 shrink-0"><% if (v) { %><% if (isM && item[f.name + 'Type'] === 'video') { %><video src="<%= v %>" muted loop playsinline autoplay class="w-full h-full object-cover"></video><% } else { %><img src="<%= v %>" alt="" class="w-full h-full object-cover"><% } %><% } else { %><i class="bi <%= isM ? 'bi-film' : 'bi-image' %> text-3xl"></i><% } %></div>
             <div class="space-y-2 text-sm min-w-0">
-              <input id="<%= id %>" type="file" name="<%= f.name %>" accept="image/jpeg,image/png,image/webp,image/gif" data-preview="pv_<%= f.name %>" class="block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-black file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-neutral-700">
-              <p class="text-xs text-neutral-500">JPG, PNG, WebP, atau GIF · maks. 5 MB</p>
-              <% if (v) { %><label class="inline-flex items-center gap-2 text-xs"><input type="checkbox" name="<%= f.name %>__remove" value="1" class="rounded border-neutral-400 text-black focus:ring-black"> Hapus gambar saat ini</label><% } %>
+              <input id="<%= id %>" type="file" data-field="<%= f.name %>" accept="<%= isM ? 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm' : 'image/jpeg,image/png,image/webp,image/gif' %>" data-preview="pv_<%= f.name %>" class="block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-black file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-neutral-700">
+              <input type="hidden" name="<%= f.name %>__url" value="">
+              <p class="text-xs text-neutral-500"><%= isM ? 'Gambar JPG/PNG/WebP/GIF maks. 5 MB · Video MP4/WebM maks. 50 MB' : 'JPG, PNG, WebP, atau GIF · maks. 5 MB' %></p>
+              <% if (v) { %><label class="inline-flex items-center gap-2 text-xs"><input type="checkbox" name="<%= f.name %>__remove" value="1" class="rounded border-neutral-400"> Hapus <%= isM ? 'media' : 'gambar' %> saat ini</label><% } %>
             </div>
           </div>
         <% } else if (f.name === 'icon') { %>
